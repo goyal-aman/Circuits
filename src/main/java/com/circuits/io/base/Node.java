@@ -3,6 +3,10 @@ package com.circuits.io.base;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.function.Consumer;
+import java.util.stream.Collector;
+import java.util.stream.Stream;
+
+import com.circuits.io.Bit.Bit;
 
 public abstract class Node {
 
@@ -17,9 +21,13 @@ public abstract class Node {
     public Node() {
         this.inp = new ArrayList<Node>();
         this.op = new ArrayList<Node>();
-
         setId();
-
+    }
+    public Node(boolean state) {
+        this.inp = new ArrayList<Node>();
+        this.op = new ArrayList<Node>();
+        this.state = state;
+        setId();
     }
 
     public boolean getState() {
@@ -36,11 +44,12 @@ public abstract class Node {
 
     protected void update_state(boolean new_state) {
         /* update current state and nofity dependents to recompute */
+        System.out.println(this.id + " " + this.state + " to " + new_state);
         this.state = new_state;
-        if(this.on_change_consumer!=null){
-            System.out.println("\n-----START: "+this.id+"-----");
+        if (this.on_change_consumer != null) {
+
             this.on_change_consumer.accept(new_state);
-            System.out.println("-----END: "+this.id+"-----\n");
+
         }
         notifyNext();
     }
@@ -59,6 +68,14 @@ public abstract class Node {
 
     public List<Node> getInp() {
         return this.inp;
+    }
+
+    public void setInp(List<Node> inp) {
+        this.inp = inp;
+    }
+
+    public void setOp(List<Node> op) {
+        this.op = op;
     }
 
     public void notifyNext() {
@@ -83,10 +100,29 @@ public abstract class Node {
         this.on_change_consumer = consumer;
     }
 
-    public abstract void compute();
+    public void compute(){
+        boolean new_state = calculateNewState(getInp());
+        update_state(new_state);
+    }
+
+    /**
+     * @param inp
+     * @return
+     */
+    public abstract boolean calculateNewState(List<Node> inp);
+
+    public  boolean calculateNewState(boolean... bools){
+        List<Node> nodes = new ArrayList<Node>();
+        for(boolean bool : bools){
+            nodes.add(new Bit(bool));
+        }
+        return calculateNewState(nodes);
+    }
 
     public String toString() {
         return String.format(this.getClass().getName() + "{ id:" + id + " state:" + state + "}");
     }
+
+
 
 }

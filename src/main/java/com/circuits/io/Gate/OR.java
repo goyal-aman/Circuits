@@ -1,18 +1,19 @@
 package com.circuits.io.Gate;
 
+import java.util.List;
+
 import com.circuits.io.base.Node;
 
 public class OR extends Node {
 
-    @Override
-    public void compute() {
-        for (Node n : getInp()) {
+    public  boolean calculateNewState(List<Node> inp){
+        for (Node n : inp) {
             if (n.getState()) {
-                update_state(true);
-                return;
+                return true;
             }
         }
-        update_state(false);
+        return false;
     }
+
 
 }

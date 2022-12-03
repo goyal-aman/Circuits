@@ -14,21 +14,30 @@ public class Main {
 
         OR orGate = new OR();
         OR orGate2 = new OR();
+        NOR nor1 = new NOR();
+        AND andGate =new AND();
+        NAND nandGate = new NAND();
+
         orGate.connect(orGate2);
 
-        System.out.println(b1 + " " + b2 + " " + orGate);
+        // System.out.println(b1 + " " + b2 + " " + orGate);
 
-        orGate.onChange(state -> System.out.println(" state:" + state));
-        orGate2.onChange(state -> System.out.println(" state:" + state));
+        // orGate.onChange(state -> System.out.println(" state:" + state));
+        // orGate2.onChange(state -> System.out.println(" state:" + state));
 
-        b1.connect(orGate);
-        b2.connect(orGate);
+        EXOR exor = new EXOR();
 
-        b1.set();
         b1.unSet();
 
-        b2.set();
-        b1.set();
+        b1.connect(exor);
+        b2.connect(exor);
+
+        boolean ff = exor.calculateNewState(false, false);
+        boolean ft = exor.calculateNewState(false , true);
+        boolean tf = exor.calculateNewState(true, false);
+        boolean tt = exor.calculateNewState(true, true);
+        
+        System.out.println(ff+" "+ft+" "+tf+" "+tt);
 
     }
 }
